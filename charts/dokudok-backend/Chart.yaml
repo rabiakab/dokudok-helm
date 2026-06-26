@@ -1,0 +1,12 @@
+apiVersion: v2
+name: dokudok-backend
+description: Helm chart for the Dokudok Spring Boot backend
+type: application
+version: 0.1.0-beta.1
+appVersion: "0.1.0-beta.1"
+keywords:
+  - dokudok
+  - spring-boot
+  - jhipster
+maintainers:
+  - name: Dokudok Team

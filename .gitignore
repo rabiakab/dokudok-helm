@@ -1,0 +1,7 @@
+# Packaged charts (generated, not committed)
+*.tgz
+.cr-release-packages/
+cr-index/
+
+# OS
+.DS_Store

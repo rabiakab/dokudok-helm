@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dokudok-backend.fullname" . }}-env
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dokudok-backend.labels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.env }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}

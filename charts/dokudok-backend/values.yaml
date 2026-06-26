@@ -1,0 +1,122 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/dokudok/backend
+  pullPolicy: IfNotPresent
+  tag: ""  # Overridden in env-specific values
+
+imagePullSecrets:
+  - name: ghcr-pull-secret
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automountServiceAccountToken: false
+  annotations: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+  host: api.dokudok.com
+  tls:
+    secretName: dokudok-backend-tls
+
+# Non-sensitive environment variables rendered into ConfigMap
+env:
+  SPRING_PROFILES_ACTIVE: "prod"
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgresql.dokudok-db.svc.cluster.local:5432/dokudok"
+  SPRING_DATASOURCE_USERNAME: "dokudok"
+  SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI: "https://auth.dokudok.com/realms/jhipster"
+  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID: "web_app"
+  JHIPSTER_SECURITY_OAUTH2_AUDIENCE: "account,api://default"
+  MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED: "true"
+  MANAGEMENT_PROMETHEUS_METRICS_EXPORT_STEP: "60"
+  JAVA_OPTS: "-XX:MaxRAMPercentage=75.0 -XX:+UseContainerSupport -XX:+AlwaysPreTouch"
+  SERVER_PORT: "8080"
+
+# Secret name containing sensitive env vars
+# Must exist before helm install (created via sops decrypt)
+existingSecret: dokudok-backend-secrets
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+livenessProbe:
+  httpGet:
+    path: /management/health/liveness
+    port: 8080
+  initialDelaySeconds: 90
+  periodSeconds: 30
+  failureThreshold: 3
+  timeoutSeconds: 5
+
+readinessProbe:
+  httpGet:
+    path: /management/health/readiness
+    port: 8080
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  failureThreshold: 6
+  timeoutSeconds: 5
+
+# Rolling update — zero downtime
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+terminationGracePeriodSeconds: 60
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+networkPolicy:
+  enabled: true
+
+# Pod anti-affinity — spread across nodes
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: dokudok-backend
+          topologyKey: kubernetes.io/hostname
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
