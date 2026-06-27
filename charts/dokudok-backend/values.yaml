@@ -60,7 +60,7 @@ livenessProbe:
   httpGet:
     path: /management/health/liveness
     port: 8080
-  initialDelaySeconds: 90
+  initialDelaySeconds: 220
   periodSeconds: 30
   failureThreshold: 3
   timeoutSeconds: 5
