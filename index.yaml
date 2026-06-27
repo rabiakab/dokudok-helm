@@ -2,6 +2,22 @@ apiVersion: v1
 entries:
   dokudok-backend:
   - apiVersion: v2
+    appVersion: 0.1.0-beta.2
+    created: "2026-06-27T19:16:25.029159904Z"
+    description: Helm chart for the Dokudok Spring Boot backend
+    digest: 90272f3cc52d58cd51f996feed064e978766e5a9929e8025d205f11f727963b5
+    keywords:
+    - dokudok
+    - spring-boot
+    - jhipster
+    maintainers:
+    - name: Dokudok Team
+    name: dokudok-backend
+    type: application
+    urls:
+    - https://github.com/rabiakab/dokudok-helm/releases/download/dokudok-backend-0.1.0-beta.2/dokudok-backend-0.1.0-beta.2.tgz
+    version: 0.1.0-beta.2
+  - apiVersion: v2
     appVersion: v0.1.0-beta.1
     created: "2026-06-26T17:19:59.054970713Z"
     description: Helm chart for the Dokudok Spring Boot backend
@@ -17,4 +33,4 @@ entries:
     urls:
     - https://github.com/rabiakab/dokudok-helm/releases/download/dokudok-backend-v0.1.0-beta.1/dokudok-backend-v0.1.0-beta.1.tgz
     version: v0.1.0-beta.1
-generated: "2026-06-26T17:19:59.054976103Z"
+generated: "2026-06-27T19:16:25.029172939Z"
