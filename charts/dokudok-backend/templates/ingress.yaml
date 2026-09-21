@@ -21,8 +21,10 @@ spec:
                 name: {{ include "dokudok-backend.fullname" . }}
                 port:
                   name: http
+  {{- if .Values.ingress.tls.enabled }}
   tls:
     - hosts:
         - {{ .Values.ingress.host }}
       secretName: {{ .Values.ingress.tls.secretName }}
+  {{- end }}
 {{- end }}

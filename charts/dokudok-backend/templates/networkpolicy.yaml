@@ -15,20 +15,17 @@ spec:
     - Egress
 
   ingress:
-    # Allow traffic from ingress-nginx namespace (pod-network) or node IPs (hostNetwork DaemonSet)
+    # Ingress controller + Prometheus namespaces, and node/private IPs (hostPort traffic)
     - from:
+        {{- range .Values.networkPolicy.ingressNamespaces }}
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: ingress-nginx
+              kubernetes.io/metadata.name: {{ . }}
+        {{- end }}
+        {{- range .Values.networkPolicy.ingressCidrs }}
         - ipBlock:
-            cidr: 10.0.0.0/8
-      ports:
-        - port: 8080
-    # Allow Prometheus scraping from monitoring namespace
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: monitoring
+            cidr: {{ . }}
+        {{- end }}
       ports:
         - port: 8080
 
@@ -39,11 +36,11 @@ spec:
           protocol: UDP
         - port: 53
           protocol: TCP
-    # PostgreSQL — dokudok-db namespace
+    # PostgreSQL (CloudNativePG cluster namespace)
     - to:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: dokudok-db
+              kubernetes.io/metadata.name: {{ .Values.networkPolicy.databaseNamespace }}
       ports:
         - port: 5432
     # Keycloak / external HTTPS (OIDC token validation)

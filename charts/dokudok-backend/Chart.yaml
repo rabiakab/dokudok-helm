@@ -2,8 +2,8 @@ apiVersion: v2
 name: dokudok-backend
 description: Helm chart for the Dokudok Spring Boot backend
 type: application
-version: 0.1.0-beta.2
-appVersion: "0.1.0-beta.1"
+version: 0.2.0
+appVersion: "sha-1923028"
 keywords:
   - dokudok
   - spring-boot
