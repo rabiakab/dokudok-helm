@@ -116,6 +116,10 @@ networkPolicy:
   ingressNamespaces: [kube-system, monitoring]
   ingressCidrs: [10.0.0.0/8]
   databaseNamespace: dokudok-db
+  # Egress to the ingress controller pods: the backend calls Keycloak by its public name, which lands on
+  # Traefik's hostPort and is DNATed to the Traefik pod ports BEFORE the policy is evaluated.
+  ingressControllerNamespace: kube-system
+  ingressControllerPorts: [8443, 8000]
 
 # Spread replicas across nodes; ScheduleAnyway keeps single-node staging schedulable.
 topologySpreadConstraints:

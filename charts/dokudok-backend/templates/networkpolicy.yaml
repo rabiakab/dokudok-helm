@@ -46,4 +46,13 @@ spec:
     # Keycloak / external HTTPS (OIDC token validation)
     - ports:
         - port: 443
+    # Ingress controller pods (traffic to the public Keycloak name is DNATed to these ports)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.networkPolicy.ingressControllerNamespace }}
+      ports:
+        {{- range .Values.networkPolicy.ingressControllerPorts }}
+        - port: {{ . }}
+        {{- end }}
 {{- end }}
